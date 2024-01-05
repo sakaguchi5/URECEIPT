@@ -1,32 +1,96 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
+# Visual Studio 2022 のプロジェクトファイルや一時ファイルを無視
+.vs2019/
+.vs2022/
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.log
 *.obj
+*.pdb
+*.ilk
+*.aps
+*.ipch
+*.aps
+*.vc.db
+*.vcxproj.user
+*.sdf
+*.opensdf
 
-# Precompiled Headers
-*.gch
-*.pch
+# Resharper フォルダを無視
+_ReSharper*/
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+# ビルドアーティファクト、DLL、EXE ファイルを無視
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Ll]og/
+[Ll]ogs/
 
-# Fortran module files
-*.mod
-*.smod
+# Visual Studio Code の設定ファイルを無視
+.vscode/
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+# Windows の一般的なファイルシステムファイルを無視
+[Tt]humbs.db
+[Dd]esktop.ini
 
-# Executables
-*.exe
-*.out
-*.app
+# macOS のファイルを無視
+.DS_Store
+
+# Resharper、StyleCop などのツールのファイルを無視
+_ReSharper*/
+*.suo
+*.user
+*.suo
+*.resharper
+*.resharper.user
+*.sln.docstates
+*.userprefs
+
+# nuget パッケージを無視
+packages/
+
+# アプリケーションの設定ファイルを無視
+*.user
+*.userosscache
+*.suo
+*.suo
+*.suo
+*.suo
+
+# ログファイルを無視
+*.log
+
+# Visual Studio のテスト結果ファイルを無視
+TestResults/
+
+# Windows Installer ファイルを無視
+*.cab
+*.cab.ddp
+*.cab.ddp.64
+*.cab.ddp.x64
+*.msi
+*.msm
+*.msp
+
+# Windows フォームのビルドファイルを無視
+[Tt]emp/
+[Vv]s[Aa][Rr]e[Aa]gent/
+[Aa][Rr][Tt]ifacts/
+[Ll]og/
+[Ll]ogs/
+[Ll]ogData/
+[Ll]ogFiles/
+[Ll]ogFiles[xX]64/
+[Ll]ogFiles[xX]86/
+x64/
+x86/
