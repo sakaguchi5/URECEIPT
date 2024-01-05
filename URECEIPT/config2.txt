@@ -1,0 +1,7 @@
+TakaishiURECEIPT
+MAX_COUNT_THRESHOLD=20//最大許容カウント閾値
+MAX_SIZE_THRESHOLD=5//最大許容サイズ閾値
+MIN_COUNT=10// 最小許容値
+MAX_COUNT=20// 最大許容値
+MAX=30000//合計値の最大値
+TARGET=30000//目的の合計値
