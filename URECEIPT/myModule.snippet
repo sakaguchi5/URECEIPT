@@ -1,0 +1,32 @@
+﻿<CodeSnippet Format="1.1.0" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+    <Header>
+        <Title>myModuleSnippet</Title>
+        <Shortcut>myModulesnippet</Shortcut>
+        <Description>Module with Custom Name</Description>
+        <Author>Sakaguchi</Author>
+    </Header>
+    <Snippet>
+        <Code Language="cpp">
+            <![CDATA[
+module; // グローバルモジュールフラグメント
+// #includeはグローバルモジュールフラグメント内で行う
+export module $ModuleName$;
+export
+{
+    // Your exports here
+}
+
+module:private;
+            ]]>
+        </Code>
+    <Declarations>
+    <Literal>
+      <ID>ModuleName</ID>
+      <Default>ModuleName</Default>
+    </Literal>
+  </Declarations>
+    </Snippet>
+</CodeSnippet>
+
+
+
