@@ -33,19 +33,6 @@ export
                 return std::string();//空の文字列を返す
             }
         }
-        /*
-        bool GetSelectedFileName(std::string& str) {
-            if (GetOpenFileName(&ofn))
-            {
-                str = szFileName;
-                return true;
-            }
-            else
-            {
-                std::cout << "ファイルが選択されませんでした。" << std::endl;
-                return false;
-            }
-        }*/
 
     private:
         OPENFILENAME ofn;
@@ -147,11 +134,12 @@ export
         {
             fileReaderUmap[key].processFile(f, args...);
         };
+        static bool writeAnswer(std::deque<Receipt>& ans);
+        static bool writeAnswer(std::deque<Receipt>& ans, const std::string& filepath);
     private:
         std::unordered_map<std::string, MyFileReader> fileReaderUmap;
 
 
-        bool writeAnswer(std::deque<Receipt>& ans);
     };
 
 
@@ -186,7 +174,35 @@ bool FileProcessor::writeAnswer(std::deque<Receipt>& ans)
         }
         outputFile << std::endl;
     }
+    std::cout << "正常に出力されました" << std::endl;
 
-    return false;
+    return true;
 }
 
+bool FileProcessor::writeAnswer(std::deque<Receipt>& ans, const std::string& filepath)
+{
+    std::map<int, std::vector<int>> result;
+    for (const auto& receipt : ans) {
+        result[receipt.date].push_back(receipt.price);
+    }
+
+    for (const auto& entry : result) {
+        std::cout << "Key: " << entry.first << ", Values: ";
+        for (int value : entry.second) {
+            std::cout << value << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    std::ofstream outputFile(filepath); // 出力ファイル名を適切なものに変更
+
+    for (const auto& entry : result) {
+        outputFile << entry.first << " ";
+        for (int value : entry.second) {
+            outputFile << value << " ";
+        }
+        outputFile << std::endl;
+    }
+    std::cout << "正常に出力されました" << std::endl;
+    return true;
+}

@@ -24,7 +24,7 @@ void CTitle::Init()
 		// 空の文字列が返される限りループ
 		while ((filepath = oHandler.selectOperation("1でデフォルト、2でファイル選択: ")).empty())
 		{
-			//std::cout << "Invalid result. Retrying..." << std::endl;
+			std::cout << "もう一度選択し直してください" << std::endl;
 		}
 		loopf=fileprocessor.addfileReaderUmap("fileData", filepath, std::string(TARGETDATASTRING));
 	} while (!loopf);
@@ -40,7 +40,7 @@ void CTitle::Init()
 		// 空の文字列が返される限りループ
 		while ((filepath = oHandler.selectOperation("1でデフォルト、2でファイル選択: ")).empty())		
 		{	
-			;//何もしない
+			std::cout << "もう一度選択し直してください" << std::endl;
 		}
 		loopf = fileprocessor.addfileReaderUmap("fileConfig", filepath, std::string(TARGETCONFIGSTRING));
 	} while (!loopf);

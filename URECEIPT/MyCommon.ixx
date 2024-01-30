@@ -55,25 +55,12 @@ export
         
     };
 
-    class MyData
+    struct MyData
     {
-    public:
-        MyData()
-        {
-            //config.PrintConfig();
-        }
-
-        ~MyData()
-        {
-        }
-        
-
-        // 商品リストを初期化
+        //レシート
         std::vector<Receipt> receipts;
+        //設定
         Config config;
-    private:
-
-
     };
 
     void displayResults(std::vector<std::deque<Receipt>>& ans);
