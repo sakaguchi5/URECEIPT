@@ -36,9 +36,6 @@
     <ClCompile Include="FileProcessor.ixx">
       <Filter>ソース ファイル\module</Filter>
     </ClCompile>
-    <ClCompile Include="temple.cpp">
-      <Filter>リソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="InputKey.ixx">
       <Filter>ソース ファイル\module</Filter>
     </ClCompile>
