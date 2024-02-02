@@ -35,9 +35,8 @@ export
             std::cout << "1から" << operationList.size() << "の中から選んでください" << std::endl;
             std::cout << prompt;
             return inputGet();
-
-            //1からxの中から選んでください　　　
         }
+
     private:
         std::vector<FunctionType> operationList;
 
@@ -46,24 +45,16 @@ export
         {
             return operationList[order]();
         }
-
-        // 操作を選択して実行するための入力を受け付ける
+        // 操作を選択して実行するための入力受け付け
         FuncReturn inputGet() const
         {
             // 入力が特定の範囲にあるかどうかを確認する条件
-            IntPredicate isInRange = [*this](int x)
-                {
-                    if (0 < x && x < operationList.size() + 1)
-                    {
-                        return true;
-                    }
-                    return false;
-                };
-            auto num = InputInt::readex("整数値を入力してください: ", isInRange);
+            IntPredicate isInRange = [*this](int x) {return (0 < x && x < operationList.size() + 1); };
+            int num = Input<int>::getInputWithRetry_ex(isInRange, "整数値を入力してください: ");
+
             std::cout << num << std::endl;
             return Get(num - 1);
         }
-
     };
 
 

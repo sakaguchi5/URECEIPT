@@ -6,73 +6,126 @@ import Mod_MyCommon;
 export
 {
     template <typename T>
-    class Input {
-    public:
+    class Input
+    {
         // テンプレート引数 T が int または string に変換可能であることを確認する
-        static T read(const std::string& prompt = "値を入力してください: ") {
+        static_assert(std::is_integral<T>::value || std::convertible_to<std::string, T>,
+            "無効な型です。サポートされている型: int および stringに変換できる型");
 
-            static_assert(std::is_integral<T>::value || std::convertible_to<std::string, T>,
-                "無効な型入力です。サポートされている型: int および stringに変換できる型");
+        template <typename>
+        using MaybeMonad = std::expected<T, std::string>;
 
-            T value;
-            while (true) {
-                std::cout << prompt;
-                // 入力が有効かどうかを確認
-                if (getValidInput(value)) {
-                    return value;
-                }
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            }
-        }
-
-    private:
-        // 入力が有効かどうかを確認するためのヘルパー関数
-        template <typename T>
-        static bool getValidInput(T& value) {
-            if (std::cin >> value) {
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                return true;
-            }
-            std::cerr << "無効な入力です。再入力してください。" << std::endl;
-            return false;
-        }
-    };
-
-    // int型に特殊化されたクラステンプレート
-    class InputInt : public Input<int> {
     public:
-        // 特定の条件を満たす整数の入力を受け付ける
-        static int readex(const std::string& prompt = "値を入力してください: ", IntPredicate checkCondition = [](int) { return true; }) {
-            int value;
+        static T getInputWithRetry(const std::string& prompt = "値を入力してください: ")
+        {
+            std::string userInput;
+
             while (true) {
                 std::cout << prompt;
+                std::getline(std::cin, userInput);
 
-                if (getValidIntPredicateInput(value, checkCondition)) {
-                    return value;
+                // 入力文字列をMaybeモナドを使って任意の型に変換
+                MaybeMonad<T> result = convertInput<T>(userInput);
+
+                // 変換が成功したら値を返す
+                if (result) {
+                    return result.value();
                 }
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                // 変換が失敗したらエラーメッセージを表示して再入力
+                else {
+                    std::cerr << result.error() << std::endl;
+                }
             }
+        }
+
+        static T getInputWithRetry_ex(tPredicate<T> checkCondition,
+            const std::string& prompt = "値を入力してください: ",
+            const std::string& conditionerror = "条件を満たしていません/または範囲外です。もう一度試してください。"
+        )
+        {
+            std::string userInput;
+
+            while (true) {
+                std::cout << prompt;
+                std::getline(std::cin, userInput);
+
+                // 入力文字列をMaybeモナドを使って任意の型に変換
+                MaybeMonad<T> result = convertInput<T>(userInput);
+
+                // 変換が成功したら条件判定を行う
+                if (result)
+                {
+                    //条件がtrueなら値を返す
+                    if (checkCondition(result.value())) {
+                        return result.value();
+                    }
+                    //条件がfalseならエラーメッセージを表示して再入力
+                    else {
+                        std::cerr << conditionerror << std::endl;
+                    }
+
+                }
+                // 変換が失敗したらエラーメッセージを表示して再入力
+                else {
+                    std::cerr << result.error() << std::endl;
+                }
+            }
+        }
+        //単に入力が条件を満たすかどうかを判定する関数
+        bool validateInput(tPredicate<T> checkCondition,
+            const std::string& prompt = "値を入力してください: ")
+        {
+            std::string userInput;
+
+            while (true) {
+                std::cout << prompt;
+                std::getline(std::cin, userInput);
+
+                // 入力文字列をMaybeモナドを使って任意の型に変換
+                MaybeMonad<T> result = convertInput<T>(userInput);
+
+                // 変換が成功したら真偽値を返す
+                if (result)
+                {
+                    return checkCondition(result.value());
+                }
+                // 変換が失敗したらエラーメッセージを表示して再入力
+                else
+                {
+                    std::cerr << result.error() << std::endl;
+                }
+            }
+
         }
 
     private:
-        // 特定の条件を満たす整数の入力が有効かどうかを確認するためのヘルパー関数
-        static bool getValidIntPredicateInput(int& value, IntPredicate checkCondition) {
-            if (std::cin >> value) {
-                if (checkCondition(value)) {
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    return true;
-                }
-                else {
-                    std::cerr << "条件を満たしていません/または範囲外です。もう一度試してください。" << std::endl;
-                    return false;
-                }
+        //ユーザーの入力が正しく行われているかを判断するヘルパー関数
+        //char型のみ特殊化
+        template <typename>
+        static MaybeMonad<T> convertInput(const std::string& input)
+        {
+            T result{};
+            std::istringstream stream(input);
+            stream >> result;
 
+            if (stream.fail() || !stream.eof()) {
+                return std::unexpected{ "無効な入力です。再入力してください。" };
             }
-            std::cerr << "無効な入力です。再入力してください。" << std::endl;
-            return false;
+
+            return result;
         }
+        template<>
+        static MaybeMonad<T> convertInput<char>(const std::string& input)
+        {
+            if (input.length() == 1) {
+                return input[0];
+            }
+            else {
+                return std::unexpected{ "無効な入力です。再入力してください。" };
+            }
+        }
+
+
     };
 
 

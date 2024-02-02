@@ -14,34 +14,27 @@ void CGame::Init()
 
 void CGame::Update()
 {
-	auto x = Input<char>::read("yで組み合わせ探索を実行");
-	if (x == 'y')
+	if (isTargetChar<'y'>(Input<char>::getInputWithRetry("yで組み合わせ探索を実行")))
 	{
 		// 組み合わせ探索を実行
 		dpp.initializeDP(config,receipts);
 		dpp.calculateDP(config, receipts);
 
-		cs.searchCombination(config, receipts,dpp.dp, receipts.size(), config.target);
+		cs.searchCombination(config, receipts,dpp.dp, (int)receipts.size(), config.target);
 		// 結果を表示
 		auto ans = cs.GetAnswer();
 		ResultDisplay::displayResults(ans);
 		//rd.displayResults(ans);
-		x = Input<char>::read("nでシーン移行");
-		if (x == 'n')
+		if (isTargetChar<'n'>(Input<char>::getInputWithRetry("nでシーン移行")))
 		{
 			
 			std::cout << "ok";
 			int casenum;
 			
 			std::string str2 = ("1から" + std::to_string(config.maxSizeThreshold) + "の中から選んでください");
-			casenum = InputInt::readex("caseを指定してください\n"+str2, [=](int x)
-				{
-					if (0 < x && x < config.maxSizeThreshold + 1)
-					{
-						return true;
-					}
-					return false;
-				});
+			casenum = Input<int>::getInputWithRetry_ex(
+				[=](int x) {return(0 < x && x < config.maxSizeThreshold + 1); } ,
+				"caseを指定してください\n" + str2);
 			std::string outputpath;
 			//出力用のOPENFILENAME 構造体を用意する必要があるため、一旦出力先は固定
 			/*

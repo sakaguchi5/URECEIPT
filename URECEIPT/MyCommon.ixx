@@ -1,17 +1,23 @@
 module; // グローバルモジュールフラグメント
 // #includeはグローバルモジュールフラグメント内で行う
-
 export module Mod_MyCommon;
 import std;
 export
 {
 
 	using vi = std::vector<int>;//intのvector
-    using IntPredicate = std::function<bool(int)>;//整数述語の型
-    
+    template <typename T>
+    using tPredicate = std::function<bool(const T&)>;// 条件判定を行う関数型t
+
+    using IntPredicate = tPredicate<int>;//int型の引数を持つ述語の型
+
     constexpr std::string_view TARGETDATASTRING = "TakaishiURECEIPT";
     constexpr std::string_view TARGETCONFIGSTRING = "TakaishiURECEIPT";
 
+    
+    // 文字が対象の文字と等しいかどうかを確認する非型テンプレート関数
+    template <char TargetChar>
+    bool isTargetChar(char c) { return (c == TargetChar); }
 
 	//各スマートポイントのエイリアステンプレート
 	template <class T>
@@ -72,6 +78,7 @@ export
         static void displayResults(std::vector<std::deque<Receipt>>& ans);
     private:
     };
+    
 }
 
 module:private;

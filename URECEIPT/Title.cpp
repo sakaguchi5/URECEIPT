@@ -104,34 +104,11 @@ void CTitle::Init()
 //更新処理
 void CTitle::Update()
 {
-
-
-	/*
-	std::function<std::string()>f = []() { return std::string("hello"); };
-
-	oHandler.addFunction(f);
-	oHandler.addFunction([]() { return std::string("world"); });
-	oHandler.addFunction([]() { return std::string("end"); });
-	std::cout << oHandler.selectOperation() << std:: endl;*/
-
-	//displayResults(receipts);
-
-	//auto str = oHandler.selectOperation();
-	//std::cout << str << std::endl;
-	//std::cout << "" << std::endl;
-
-	auto x = Input<char>::read("yでシーン移行");
-	if (x=='y')
-	{
-		smanager->SetScene<CGame>(smanager,config,receipts);
-	}
-
 	
-
-
-
-
-
+	if (isTargetChar<'y'>(Input<char>::getInputWithRetry("yでシーン移行")))
+	{
+		smanager->SetScene<CGame>(smanager, config, receipts);
+	}
 
 }
 
