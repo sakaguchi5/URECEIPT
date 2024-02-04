@@ -11,23 +11,10 @@ import Mod_InputKey;
 //初期化
 void CTitle::Init()
 {
-	//std::cout << "CTitle " << std::endl; 
-	//std::string str = "fileData";
-	printClass();
 	oHandler.addFunction([]() { return std::string("data3.txt"); });
 	oHandler.addFunction([this]() {return fileSelector.GetSelectedFileName() ;});
 
-	std::string filepath;
-	bool loopf;
-	do
-	{
-		// 空の文字列が返される限りループ
-		while ((filepath = oHandler.selectOperation("1でデフォルト、2でファイル選択: ")).empty())
-		{
-			std::cout << "もう一度選択し直してください" << std::endl;
-		}
-		loopf=fileprocessor.addfileReaderUmap("fileData", filepath, std::string(TARGETDATASTRING));
-	} while (!loopf);
+	fileprocessor.processFilePath(oHandler, "fileData", std::string(TARGETDATASTRING));
 
 	//操作を全削除
 	oHandler.removeAllFunctions();
@@ -35,15 +22,7 @@ void CTitle::Init()
 	oHandler.addFunction([]() { return std::string("config2.txt"); });
 	oHandler.addFunction([this]() {return fileSelector.GetSelectedFileName(); });
 
-	do
-	{
-		// 空の文字列が返される限りループ
-		while ((filepath = oHandler.selectOperation("1でデフォルト、2でファイル選択: ")).empty())		
-		{	
-			std::cout << "もう一度選択し直してください" << std::endl;
-		}
-		loopf = fileprocessor.addfileReaderUmap("fileConfig", filepath, std::string(TARGETCONFIGSTRING));
-	} while (!loopf);
+	fileprocessor.processFilePath(oHandler, "fileConfig", std::string(TARGETCONFIGSTRING));
 
 
 	LineParser<std::vector<Receipt>> tes3
@@ -67,12 +46,12 @@ void CTitle::Init()
 
 	// 設定情報とメンバ変数の対応を保持するマップ
 	std::map<std::string, int*> configMap = {
-		{"MAX_COUNT_THRESHOLD", &config.maxCountThreshold},
-		{"MAX_SIZE_THRESHOLD", &config.maxSizeThreshold},
-		{"MIN_COUNT", &config.minCount},
-		{"MAX_COUNT", &config.maxCount},
-		{"MAX", &config.MAX},
-		{"TARGET", &config.target}
+		{"MAX_COUNT_THRESHOLD", &myData.config.maxCountThreshold},
+		{"MAX_SIZE_THRESHOLD", &myData.config.maxSizeThreshold},
+		{"MIN_COUNT", &myData.config.minCount},
+		{"MAX_COUNT", &myData.config.maxCount},
+		{"MAX", &myData.config.MAX},
+		{"TARGET", &myData.config.target}
 	};
 
 	
@@ -94,8 +73,8 @@ void CTitle::Init()
 
 		};
 
-	fileprocessor.processFile("fileData",tes3, receipts);
-	fileprocessor.processFile("fileConfig", tes4, config, configMap);
+	fileprocessor.processFile("fileData",tes3, myData.receipts);
+	fileprocessor.processFile("fileConfig", tes4, myData.config, configMap);
 
 
 
@@ -107,7 +86,7 @@ void CTitle::Update()
 	
 	if (isTargetChar<'y'>(Input<char>::getInputWithRetry("yでシーン移行")))
 	{
-		smanager->SetScene<CGame>(smanager, config, receipts);
+		smanager->SetScene<CGame>(smanager, myData);
 	}
 
 }
@@ -118,11 +97,4 @@ void CTitle::Draw()
 	
 	
 
-}
-/**/
-void CTitle::printClass() 
-{
-	//std::cout << "CTitle " << std::endl;
-	//std::cout << typeid(this).name() << std::endl;
-	std::println("CTitle Start");
 }

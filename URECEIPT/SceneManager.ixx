@@ -32,7 +32,6 @@ export
 	private:
 	protected:
 		MyData mydata;
-		virtual void printClass() = 0;
 	private:
 	};
 

@@ -47,7 +47,7 @@ export
         int target = 0;/*const*/
 
         // 設定情報を表示するメソッド
-        void PrintConfig();
+        void PrintConfig() const;
             /*
         {
             std::cout << "maxCountThreshold: " << maxCountThreshold << std::endl;
@@ -83,7 +83,7 @@ export
 
 module:private;
 
-void Config::PrintConfig()
+void Config::PrintConfig() const
 {
     std::cout << "maxCountThreshold: " << maxCountThreshold << std::endl;
     std::cout << "maxSizeThreshold: " << maxSizeThreshold << std::endl;

@@ -14,7 +14,7 @@ export
 	{
 	public:
 		//コンストラクタ
-		CGame(s_p<SceneManager> pManager, const Config &config, const std::vector<Receipt> &receipts) :CScene(pManager), config(config), receipts(receipts)
+		CGame(s_p<SceneManager> pManager, const MyData& myData) :CScene(pManager), myData(myData)
 		{
 			
 			Init(); 
@@ -29,12 +29,13 @@ export
 
 	private:
 		// 商品リストを初期化
-		std::vector<Receipt> receipts;
+		//std::vector<Receipt> receipts;
 		// ターゲット値を設定
-		Config config;
+		//Config config;
+
+		MyData myData;
 		DynamicProgrammingProcessor dpp;
 		CombinationSearch cs;
-		void printClass();
 		
 	};
 

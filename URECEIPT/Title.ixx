@@ -9,7 +9,6 @@ import Mod_OperationHandler;
 
 export
 {
-
 	class CTitle :public CScene
 	{
 	public:
@@ -23,12 +22,12 @@ export
 		void Draw();//描画処理
 
 	private:
+		/*
 		// 商品リストを初期化
 		std::vector<Receipt> receipts;
 		// ターゲット値を設定
-		Config config;
-		//void printClass() { std::cout << typeid(this).name() << std::endl; };
-		void printClass();
+		Config config;*/
+		MyData myData;
 		FileSelector fileSelector;
 		
 		FileProcessor fileprocessor;

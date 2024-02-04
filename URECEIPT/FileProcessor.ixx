@@ -6,6 +6,7 @@ module; // グローバルモジュールフラグメント
 export module Mod_FileProcessor;
 import std;
 import Mod_MyCommon;
+import Mod_OperationHandler; 
 
 export
 {
@@ -48,26 +49,35 @@ export
         MyFileReader(const std::string& filepath, const std::string& targetString)
             : filepath(filepath), targetString(targetString) {}
 
-        template <class... Args>
-        bool processFile(LineParser<Args...> f, Args&... args)
+        //最初の行が目的のものでないかどうかのみを判断する関数
+        bool FirstLineCheck()
         {
-            if (!openFile())
-            {
-                std::cerr << "ファイルが開けませんでした。\n";
+            if (!openFile()){
                 return false;
             }
-            //std::cout << "ファイルが正常に開かれました。\n";
-            if (!isFirstLineValid())
-            {
-                std::cerr << "最初の行が目的のものでない可能性があります。\n";
+            if (!isFirstLineValid()){
                 closeFile();  // ファイルを閉じる
                 return false;
             }
-            //std::cout << "最初の行が目的のものであることが確認されました。\n";
+            closeFile();  // ファイルを閉じる
+            return true;
+        }
+        //最初の行が目的のものでないかどうかを判断したのち、構文解析を実行する関数
+        template <class... Args>
+        bool processFile(LineParser<Args...> f, Args&... args)
+        {
+            if (!openFile()){
+                return false;
+            }
+            if (!isFirstLineValid()){
+                closeFile();  // ファイルを閉じる
+                return false;
+            }
             parseRemainingLines(f, args...);
             closeFile();  // ファイルを閉じる
             return true;
         }
+
     private:
         std::ifstream file;
         std::string filepath;
@@ -77,7 +87,13 @@ export
         bool openFile() 
         {
             file.open(filepath);
-            return file.is_open();
+            if (file.is_open()){
+                return true;
+            }
+            else{
+                std::cerr << "ファイルが開けませんでした。\n";
+                return false;
+            }
         }
 
         bool isFirstLineValid() 
@@ -86,6 +102,7 @@ export
                 std::getline(file, firstLine);
                 return (firstLine.find(targetString) != std::string::npos);
             }
+            std::cerr << "最初の行が目的のものでない可能性があります。\n";
             return false;
         }
 
@@ -124,9 +141,20 @@ export
             if (it != fileReaderUmap.end()) {
                 return false;
             }
-            // キーが存在しない場合は新しいキーと値を追加して true を返す
-            fileReaderUmap[key] = MyFileReader(filepath, targetString);
-            return true;
+
+            // 指定されたファイルパスとターゲット文字列を使用してMyFileReaderオブジェクトを生成
+            // fileReaderObject.FirstLineCheck()でファイルの最初の行を確認し、成功した場合はfileReaderUmapに追加してtrueを返す
+            // 失敗した場合はfalseを返す
+            if (auto fileReaderObject = MyFileReader(filepath, targetString); fileReaderObject.FirstLineCheck()) {
+                // ファイルリーダーを連想配列に追加する
+                fileReaderUmap.try_emplace(key, std::move(fileReaderObject));
+                return true;
+            }
+            else {
+                // ファイルの最初の行が一致しない場合はfalseを返す
+                return false;
+            }
+            
         };
 
         template <class... Args>
@@ -134,6 +162,11 @@ export
         {
             fileReaderUmap[key].processFile(f, args...);
         };
+
+        // ファイルパスを取得して処理する関数
+        void processFilePath(const OperationHandler<std::string>& oHandler, const std::string& key, const std::string& targetstring);
+
+
         static bool writeAnswer(std::deque<Receipt>& ans);
         static bool writeAnswer(std::deque<Receipt>& ans, const std::string& filepath);
     private:
@@ -149,6 +182,22 @@ export
 module:private;
 
 
+
+void FileProcessor::processFilePath(const OperationHandler<std::string>& oHandler, const std::string& key, const std::string& targetstring)
+{
+    std::string filepath;
+    // 空でない文字列が入力されるまでループ
+    while (true)
+    {
+        // oHandlerの要素数が2でなければならない
+        filepath = oHandler.selectOperation("1でデフォルト、2でファイル選択: ");
+        //短絡評価を利用した条件分岐
+        //空でない文字列が入力され、かつファイルの最初の行を確認して成功した場合ループを抜ける
+        if (!filepath.empty() && addfileReaderUmap(key, filepath, targetstring))
+            break;
+        std::cout << "もう一度選択し直してください" << std::endl;
+    }
+}
 
 bool FileProcessor::writeAnswer(std::deque<Receipt>& ans)
 {
